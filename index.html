@@ -334,12 +334,12 @@
             <p class="tagline">오늘 마음은 어때요?<br />힘든 일, 기쁜 일, 사소한 고민까지<br />편하게 이야기해 주세요 🌿</p>
             <div class="status-row">
               <span class="badge"><span class="dot"></span>지금 대화 가능</span>
-              <span class="badge mode-demo" id="modeBadge"><span class="dot"></span><span id="modeText">체험 모드</span></span>
+              <span class="badge" id="modeBadge"><span class="dot"></span><span id="modeText">Gemini 연결됨</span></span>
             </div>
           </div>
           <button class="settings-toggle" id="settingsToggle" type="button" aria-expanded="false">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.64 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.01A1.7 1.7 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09c0 .68.4 1.3 1 1.55.61.26 1.32.1 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.01c.26.6.87 1 1.55 1H21a2 2 0 1 1 0 4h-.09c-.68 0-1.3.4-1.51 1Z"/></svg>
-            API 설정
+            설정
           </button>
           <div class="memory-box">
             <div class="m-title"><span>대화 기억</span><output id="memoryCount">1개 메시지</output></div>
@@ -349,24 +349,14 @@
         </div>
 
         <section class="panel" aria-labelledby="apiTitle">
-          <h2 id="apiTitle">AI API 연결</h2>
-          <p class="desc">API 키를 입력하면 실제 AI 모델과 대화할 수 있어요. 키가 없으면 대화를 맛볼 수 있는 체험 모드로 동작해요.</p>
+          <h2 id="apiTitle">AI 연결</h2>
+          <p class="desc">키 입력 없이 바로 실제 AI와 대화할 수 있어요. 안전한 프록시를 통해 Gemini에 연결돼요.</p>
           <div class="field">
-            <label for="providerSelect">API 제공자</label>
-            <select id="providerSelect">
-              <option value="gemini" selected>Google AI Studio (Gemini)</option>
-              <option value="openai">OpenAI (ChatGPT)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="apiKey" id="apiKeyLabel">Google AI Studio API 키</label>
-            <div class="key-row">
-              <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off" spellcheck="false" />
-              <button class="icon-btn" id="toggleKey" type="button" aria-label="API 키 보이기/숨기기">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
+            <label>API 제공자</label>
+            <div style="display:flex;align-items:center;gap:8px;background:var(--card-2);border:1.5px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px;font-size:0.9rem;font-weight:700;">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--mint);flex:none;"></span>
+              Google AI Studio (Gemini) · 프록시 경유
             </div>
-            <p class="key-note">키는 이 브라우저 탭 안에서만 쓰이고 어디에도 저장되지 않아요. 키 발급: <a id="keyLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com</a></p>
           </div>
           <div class="field">
             <label for="modelSelect">사용 모델</label>
@@ -377,8 +367,7 @@
               <option value="gemini-3.8-flash">gemini-3.8-flash</option>
             </select>
           </div>
-          <button class="btn btn-primary" id="connectBtn" type="button">연결 테스트하고 시작하기</button>
-          <p class="conn-msg" id="connMsg" role="status"></p>
+          <p class="conn-msg ok" id="connMsg" role="status">Gemini 연결됨 🎉 바로 아래에서 대화해 보세요.</p>
         </section>
 
         <section class="panel">
@@ -442,8 +431,7 @@
         var formEl = document.getElementById("composerForm");
         var sendBtn = document.getElementById("sendBtn");
         var chipsEl = document.getElementById("chips");
-        var apiKeyEl = document.getElementById("apiKey");
-        var providerEl = document.getElementById("providerSelect");
+        var PROXY_URL = "https://momo-gemini-proxy.sss8902.workers.dev";
         var modelEl = document.getElementById("modelSelect");
         var connMsgEl = document.getElementById("connMsg");
         var modeBadge = document.getElementById("modeBadge");
@@ -457,7 +445,6 @@
 
         var conversation = []; // {role: 'user'|'assistant', content: string} — system 제외 전체 기록
         var sending = false;
-        var demoMemory = { name: null, turns: 0 };
 
         function nowTime() {
           var d = new Date();
@@ -544,117 +531,32 @@
         }
 
         function setMode(connected, label) {
-          if (connected) {
-            modeBadge.classList.remove("mode-demo");
-            modeText.textContent = label || "AI 연결됨";
-          } else {
-            modeBadge.classList.add("mode-demo");
-            modeText.textContent = "체험 모드";
-          }
+          modeBadge.classList.remove("mode-demo");
+          modeText.textContent = label || "Gemini 연결됨";
         }
 
-        function getKey() { return apiKeyEl.value.trim(); }
-        function getProvider() { return providerEl.value; }
-        function providerName() { return getProvider() === "openai" ? "ChatGPT" : "Gemini"; }
-
-        /* ---------- 제공자별 설정 UI (키 라벨·발급 링크·모델 목록) ---------- */
-        var PROVIDER_UI = {
-          gemini: {
-            keyLabel: "Google AI Studio API 키",
-            placeholder: "AIza...",
-            linkHref: "https://aistudio.google.com/apikey",
-            linkText: "aistudio.google.com",
-            models: [
-              ["gemini-3.5-flash", "gemini-3.5-flash (기본)"],
-              ["gemini-3.6-flash", "gemini-3.6-flash"],
-              ["gemini-3.7-flash", "gemini-3.7-flash"],
-              ["gemini-3.8-flash", "gemini-3.8-flash"]
-            ]
-          },
-          openai: {
-            keyLabel: "OpenAI API 키",
-            placeholder: "sk-...",
-            linkHref: "https://platform.openai.com/api-keys",
-            linkText: "platform.openai.com",
-            models: [
-              ["gpt-4o-mini", "gpt-4o-mini (빠르고 경제적)"],
-              ["gpt-4o", "gpt-4o (더 똑똑해요)"],
-              ["gpt-4.1-mini", "gpt-4.1-mini"],
-              ["gpt-3.5-turbo", "gpt-3.5-turbo"]
-            ]
-          }
-        };
-        function applyProvider() {
-          var ui = PROVIDER_UI[getProvider()];
-          document.getElementById("apiKeyLabel").textContent = ui.keyLabel;
-          apiKeyEl.placeholder = ui.placeholder;
-          var link = document.getElementById("keyLink");
-          link.href = ui.linkHref;
-          link.textContent = ui.linkText;
-          modelEl.innerHTML = "";
-          ui.models.forEach(function (m) {
-            var o = document.createElement("option");
-            o.value = m[0];
-            o.textContent = m[1];
-            modelEl.appendChild(o);
-          });
-          setMode(false);
-          connMsgEl.className = "conn-msg";
-          connMsgEl.textContent = "";
-        }
-
-        /* ---------- 실제 ChatGPT API 호출 (대화 전체를 함께 전송 = 기억) ---------- */
-        function callChatGPT() {
-          var msgs = [{ role: "system", content: personaEl.value.trim() || DEFAULT_PERSONA }];
-          conversation.forEach(function (m) { msgs.push({ role: m.role, content: m.content }); });
-          return fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + getKey()
-            },
-            body: JSON.stringify({
-              model: modelEl.value,
-              messages: msgs,
-              temperature: 0.8
-            })
-          }).then(function (res) {
-            return res.json().then(function (data) {
-              if (!res.ok) {
-                var msg = (data && data.error && data.error.message) || ("HTTP " + res.status);
-                var err = new Error(msg);
-                err.status = res.status;
-                throw err;
-              }
-              var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-              if (!text) throw new Error("응답이 비어 있어요.");
-              return text.trim();
-            });
-          });
-        }
-
-        /* ---------- 실제 Gemini API 호출 (Google AI Studio, 대화 전체를 함께 전송 = 기억) ---------- */
+        /* ---------- Gemini 호출: Cloudflare Worker 프록시 경유 (키는 Worker Secret에만 있음, 대화 전체 전송 = 기억) ---------- */
         function callGemini() {
           var start = 0;
           while (start < conversation.length && conversation[start].role !== "user") start++;
           var contents = conversation.slice(start).map(function (m) {
             return { role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] };
           });
-          return fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(modelEl.value) + ":generateContent", {
+          return fetch(PROXY_URL, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-              "x-goog-api-key": getKey()
+              "Content-Type": "application/json"
             },
             body: JSON.stringify({
+              model: modelEl.value,
               system_instruction: { parts: [{ text: personaEl.value.trim() || DEFAULT_PERSONA }] },
-              contents: contents,
-              generationConfig: { temperature: 0.8 }
+              contents: contents
             })
           }).then(function (res) {
             return res.json().then(function (data) {
               if (!res.ok) {
-                var msg = (data && data.error && data.error.message) || ("HTTP " + res.status);
+                var msg = (data && data.error && (data.error.message || data.error)) || ("HTTP " + res.status);
+                if (typeof msg !== "string") msg = "HTTP " + res.status;
                 var err = new Error(msg);
                 err.status = res.status;
                 throw err;
@@ -669,63 +571,16 @@
         }
 
         function callAI() {
-          return getProvider() === "openai" ? callChatGPT() : callGemini();
+          return callGemini();
         }
 
         function friendlyError(err) {
           var em = (err && err.message) || "";
-          if ((err && err.status === 401) || /API key not valid|API_KEY_INVALID/i.test(em)) return "API 키가 맞지 않는 것 같아요 🔑 왼쪽 설정에서 키를 다시 확인해 주세요.";
-          if (err && err.status === 403) return "이 키로는 해당 API를 쓸 수 없어요 🔑 키의 권한을 확인해 주세요.";
           if (err && err.status === 429) return "요청이 너무 많거나 사용 한도(무료 할당량 포함)에 닿았어요 ⏳ 잠시 뒤에 다시 시도해 주세요.";
-          if (err && err.status === 404) return "선택한 모델을 이 키로 쓸 수 없어요 🤔 다른 모델을 골라 보세요.";
-          return "연결에 문제가 생겼어요 😢 네트워크 상태와 API 키를 확인해 주세요. (" + (err && err.message ? err.message : "알 수 없는 오류") + ")";
-        }
-
-        /* ---------- 체험 모드 답변 (키가 없을 때 UI 시연용, 이름·맥락 기억 흉내) ---------- */
-        function demoReply(text) {
-          demoMemory.turns++;
-          var nameMatch = text.match(/(?:내 이름은|제 이름은|이름은)\s*([가-힣A-Za-z]{2,10})/);
-          if (nameMatch) demoMemory.name = nameMatch[1];
-          var who = demoMemory.name ? demoMemory.name + " 님" : null;
-
-          if (/이름.*(뭐|알려|기억)/.test(text) || /내 이름/.test(text) && /뭐/.test(text)) {
-            return demoMemory.name
-              ? "물론 기억하고 있어요! " + who + "이라고 알려주셨잖아요 😊 제가 이렇게 이전 대화를 기억하면서 이야기 나눌 수 있어요 🌿"
-              : "아직 이름을 못 들었어요! 알려주시면 꼭 기억해 둘게요 😊";
-          }
-          if (nameMatch) {
-            return "반가워요, " + who + "! 🌸 이름 알려줘서 고마워요. 제가 꼭 기억하고 있을게요. 오늘은 어떤 이야기를 나누고 싶어요?";
-          }
-          if (/스트레스|힘들|지치|번아웃|짜증/.test(text)) {
-            return "많이 지치고 힘드셨겠어요 😮‍💨 그 마음, 충분히 이해해요. 잠깐 어깨에 힘 빼고 깊게 숨 한 번 쉬어볼까요? 🌿 어떤 일이 가장 마음을 무겁게 하는지, 천천히 들려주세요.";
-          }
-          if (/잠|수면|불면|피곤/.test(text)) {
-            return "밤에 잠이 안 오면 다음 날까지 너무 힘들죠 🌙 혹시 자기 전에 휴대폰을 오래 보는 편이에요? 잠들기 30분 전부터는 화면을 멀리하고 따뜻한 물 한 잔 마셔보는 것도 도움이 돼요 😊 요즘은 어떤 생각 때문에 잠이 안 오는 거예요?";
-          }
-          if (/불안|걱정|초조|긴장/.test(text)) {
-            return "불안한 마음이 들면 몸도 같이 긴장하게 되죠 🥺 지금 이 순간, 눈에 보이는 것 5가지를 천천히 떠올려 보세요. 마음이 조금 가라앉을 거예요 🌿 어떤 일이 걱정되는지 이야기해 줄 수 있어요?";
-          }
-          if (/슬프|우울|눈물|외로|쓸쓸/.test(text)) {
-            return "그런 날도 있어요, 정말로요 🫂 지금 느끼는 감정은 잘못된 게 아니에요. 저는 여기 있으니까, 서두르지 말고 천천히 이야기해요. 오늘 있었던 일부터 들려줄래요?";
-          }
-          if (/다퉜|다툼|싸웠|친구|관계|서운/.test(text)) {
-            return "가까운 사람과 마음이 어긋나면 더 아프죠 🥲 어떤 일이 있었는지 차분히 들려주세요. 상대 입장에서 한 번 같이 생각해 보면 실마리가 보일지도 몰라요 🌿";
-          }
-          if (/기뻐|기분 좋|행복|즐거|신나|좋은 일/.test(text)) {
-            return "우와, 그 얘기만 들어도 제 마음까지 밝아져요 ☀️✨ 좋은 일은 이렇게 나눌수록 더 커지잖아요! 어떤 일이었는지 자세히 들려주세요 😊";
-          }
-          if (/안녕|하이|처음/.test(text)) {
-            return "안녕하세요! 만나서 반가워요 😊 저는 모모예요. 오늘 기분은 어때요? 편하게 이름도 알려주면 제가 기억해 둘게요 🌿";
-          }
-          if (/고마|감사/.test(text)) {
-            return "천만에요, 제가 더 고맙죠 😊 언제든 마음이 복잡할 때 찾아와 주세요. 저는 항상 여기 있을게요 🌿";
-          }
-          var fallbacks = [
-            "그랬군요, 이야기해 줘서 고마워요 😊 방금 말씀하신 것 중에서 가장 마음에 남는 건 어떤 부분이에요?",
-            "네네, 계속 듣고 있어요 🌿 그때 기분이 어땠는지 조금 더 들려줄 수 있어요?",
-            "그 마음 충분히 이해해요 ✨ 서두르지 않아도 돼요. 천천히, 생각나는 대로 이야기해 주세요 😊"
-          ];
-          return fallbacks[(demoMemory.turns - 1) % fallbacks.length];
+          if (err && err.status === 404) return "선택한 모델을 지금 쓸 수 없어요 🤔 다른 모델을 골라 보세요.";
+          if (err && err.status === 500) return "연결 서버에 문제가 생겼어요 😢 잠시 뒤에 다시 시도해 주세요.";
+          if ((err && (err.status === 401 || err.status === 403)) || /API key/i.test(em)) return "연결 서버 설정에 문제가 생겼어요 😢 잠시 뒤에 다시 시도해 주세요.";
+          return "연결에 문제가 생겼어요 😢 네트워크 상태를 확인하고 잠시 뒤에 다시 시도해 주세요. (" + (err && err.message ? err.message : "알 수 없는 오류") + ")";
         }
 
         var lastFailed = false;
@@ -747,30 +602,19 @@
             inputEl.focus();
           };
 
-          if (getKey()) {
-            callAI().then(function (reply) {
-              hideTyping();
-              lastFailed = false;
-              conversation.push({ role: "assistant", content: reply });
-              addMessage("assistant", reply);
-              updateMemoryUI();
-              done();
-            }).catch(function (err) {
-              hideTyping();
-              lastFailed = true;
-              addMessage("error", friendlyError(err), { retry: true });
-              done();
-            });
-          } else {
-            setTimeout(function () {
-              hideTyping();
-              var reply = demoReply(text);
-              conversation.push({ role: "assistant", content: reply });
-              addMessage("assistant", reply);
-              updateMemoryUI();
-              done();
-            }, 900);
-          }
+          callAI().then(function (reply) {
+            hideTyping();
+            lastFailed = false;
+            conversation.push({ role: "assistant", content: reply });
+            addMessage("assistant", reply);
+            updateMemoryUI();
+            done();
+          }).catch(function (err) {
+            hideTyping();
+            lastFailed = true;
+            addMessage("error", friendlyError(err), { retry: true });
+            done();
+          });
         }
 
         function retryLast() {
@@ -799,7 +643,6 @@
 
         function resetChat() {
           conversation = [];
-          demoMemory = { name: null, turns: 0 };
           messagesEl.innerHTML = "";
           var note = document.createElement("div");
           note.className = "day-note";
@@ -834,9 +677,6 @@
           if (btn) send(btn.textContent);
         });
         document.getElementById("newChatBtn").addEventListener("click", resetChat);
-        document.getElementById("toggleKey").addEventListener("click", function () {
-          apiKeyEl.type = apiKeyEl.type === "password" ? "text" : "password";
-        });
         document.getElementById("personaReset").addEventListener("click", function () {
           personaEl.value = DEFAULT_PERSONA;
         });
@@ -846,46 +686,19 @@
           this.setAttribute("aria-expanded", open ? "true" : "false");
         });
 
-        document.getElementById("connectBtn").addEventListener("click", function () {
-          var key = getKey();
-          connMsgEl.className = "conn-msg";
-          if (!key) {
-            connMsgEl.textContent = "키를 입력하지 않으면 체험 모드로 대화해요. 실제 AI 연결은 키가 필요해요 😊";
-            setMode(false);
-            return;
-          }
-          connMsgEl.textContent = "연결을 확인하고 있어요…";
-          var testUrl, testHeaders;
-          if (getProvider() === "openai") {
-            testUrl = "https://api.openai.com/v1/models";
-            testHeaders = { "Authorization": "Bearer " + key };
-          } else {
-            testUrl = "https://generativelanguage.googleapis.com/v1beta/models";
-            testHeaders = { "x-goog-api-key": key };
-          }
-          fetch(testUrl, {
-            headers: testHeaders
-          }).then(function (res) {
-            if (res.ok) {
-              connMsgEl.className = "conn-msg ok";
-              connMsgEl.textContent = "연결 성공! 🎉 이제 실제 " + providerName() + "와(과) 대화해요. 아래 입력창에 고민을 적어 보세요.";
-              setMode(true, providerName() + " 연결됨");
-              inputEl.focus();
-            } else {
-              connMsgEl.className = "conn-msg err";
-              connMsgEl.textContent = "연결 실패 (HTTP " + res.status + ") — 키가 올바른지 확인해 주세요.";
-              setMode(false);
+        modelEl.addEventListener("change", function () {
+          try { localStorage.setItem("momo-gemini-model", modelEl.value); } catch (e) {}
+        });
+
+        try {
+          var savedModel = localStorage.getItem("momo-gemini-model");
+          if (savedModel) {
+            for (var mi = 0; mi < modelEl.options.length; mi++) {
+              if (modelEl.options[mi].value === savedModel) { modelEl.selectedIndex = mi; break; }
             }
-          }).catch(function () {
-            connMsgEl.className = "conn-msg err";
-            connMsgEl.textContent = "네트워크 오류로 확인하지 못했어요. 인터넷 연결을 확인해 주세요.";
-            setMode(false);
-          });
-        });
-        apiKeyEl.addEventListener("input", function () {
-          if (!getKey()) setMode(false);
-        });
-        providerEl.addEventListener("change", applyProvider);
+          }
+        } catch (e) {}
+        setMode(true, "Gemini 연결됨");
 
         resetChat();
         inputEl.focus();
